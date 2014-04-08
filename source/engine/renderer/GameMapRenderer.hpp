@@ -13,6 +13,7 @@ namespace glPortal {
       public:
 	GameMapRenderer(GameMap* gameMap);
 	void render();
+	void executeLegacyRenderer();
 	void drawFromPortal(const Portal& portal);
 	void renderPortals(Portal * portals, Player & player);
 	void renderAvatar(Vector3f position);

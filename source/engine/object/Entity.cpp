@@ -2,7 +2,7 @@
 
 namespace glPortal {
   namespace engine {
-    namespace Entity {
+    namespace object {
       void Entity::draw();
       }
     }
