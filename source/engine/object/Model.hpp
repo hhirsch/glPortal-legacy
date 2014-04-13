@@ -3,7 +3,7 @@
 
 #include "../../Exception.hpp"
 
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 #include "Mesh.hpp"
 #include <vector>

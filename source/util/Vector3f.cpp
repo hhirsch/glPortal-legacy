@@ -1,5 +1,5 @@
 #include "Vector3f.hpp"
-#include <math.h>
+#include <cmath>
 
 using namespace util;
 
