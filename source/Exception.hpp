@@ -1,6 +1,6 @@
 #ifndef __EXCEPTION_HPP
 #define __EXCEPTION_HPP
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 using namespace std;
 

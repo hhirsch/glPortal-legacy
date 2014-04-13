@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/glext.h>
-#include <string.h>
+#include <cstring>
 #include "../Resources.hpp"
 #include <map>
 
