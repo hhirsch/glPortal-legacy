@@ -2,7 +2,7 @@ setSpawn(
 2.5,1,5
 );
 
-addLight(10, 7, 5);
+addLight(10, 7, 5) ;
 
 addCake(17.5, 1, 5);
 

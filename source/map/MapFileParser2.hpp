@@ -13,7 +13,10 @@ enum PARSER_STATE {
 PARSER_INITIAL_STATE,
 PARSER_READING_COMMAND, 
 PARSER_READING_PARAMETERS, 
-PARSER_WAITING_TERMINATION 
+PARSER_WAITING_TERMINATION,
+PARSER_READING_ARRAY,
+PARSER_LONG_COMMENT,
+PARSER_COMMENT
 };
 
 namespace glPortal {
@@ -29,14 +32,19 @@ namespace glPortal {
       Box cakeBox;
       PARSER_STATE state;
       int lineNumber = 0;
-      std::string stringStack, currentCharacter;;
+      std::string command, stringStack, currentCharacter;
       std::string currentPositionMessage;
       std::vector<std::string> parameters;
       void parse(std::ifstream &fileStream);
       void tokenize();
+      bool characterStateMatch(std::string character, PARSER_STATE stateToCheck);
+      void clearStringStack();
+      void executeCurrentCommand();
       void throwException();
-      std::string parserStateStrings[4] = {
-        "INITIAL STATE","READING COMMAND","READING PARAMETERS", "AWAITING TERMINATION"
+      std::string parserStateStrings[7] = {
+        "INITIAL STATE","READING COMMAND","READING PARAMETERS", 
+        "AWAITING TERMINATION OR ARRAY", "READING ARRAY",
+        "COMMENT", "COMMENT"
       };
       const std::string NO_FILE_MESSAGE = "Unable to load map. File does not exist";
     public:

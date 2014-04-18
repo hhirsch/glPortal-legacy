@@ -40,8 +40,6 @@ namespace glPortal {
       }
     }
 
-    //    Vector<String> MapFileParser2::extractCommand(){
-    //}
     void MapFileParser2::parse(std::ifstream &fileStream){
       std::string line, string;
       while(std::getline(fileStream, line)){
@@ -52,7 +50,11 @@ namespace glPortal {
           for(int i = 0; i <= line.length(); i++){
             stringstream conversionStream;
             conversionStream << line[i];
-            conversionStream >> currentCharacter;
+            if(line[i] == ' '){
+              currentCharacter = std::string(" ");
+            } else {
+              conversionStream >> currentCharacter;
+            }
             this->tokenize();
           }
         }
@@ -62,37 +64,69 @@ namespace glPortal {
     void MapFileParser2::tokenize(){
       std::string message;
       if(currentCharacter == " "){
-      } else if(currentCharacter == "("){
+      } else if(currentCharacter == "/"){
         if(state == PARSER_READING_COMMAND){
-          state = PARSER_READING_PARAMETERS;
-          std::cout << stringStack << std::endl;  
-          stringStack = "";
+          state = PARSER_LONG_COMMENT;
+        } else if(state == PARSER_LONG_COMMENT){
+          state = PARSER_READING_COMMAND;
         } else {
           throwException();
         }
-      } else if(currentCharacter == ","){
-        if(state == PARSER_READING_PARAMETERS){
-          std::cout << stringStack << std::endl;  
-          parameters.push_back(stringStack);
-          stringStack = "";
-        } else {
-          throwException();
-        }
-      } else if(currentCharacter == ")"){
+      } else if(state == PARSER_LONG_COMMENT){
+      } else if(characterStateMatch("(", PARSER_READING_COMMAND)){
+        state = PARSER_READING_PARAMETERS;
+        command = stringStack;
+        clearStringStack();
+      } else if(characterStateMatch(",", PARSER_READING_PARAMETERS)){
+        parameters.push_back(stringStack);
+        clearStringStack();
+      } else if(characterStateMatch(")", PARSER_READING_PARAMETERS)){
         state = PARSER_WAITING_TERMINATION;
         parameters.push_back(stringStack);
-        stringStack = "";
+        clearStringStack();
       } else if(currentCharacter == ";"){
         if(state == PARSER_WAITING_TERMINATION){
           state = PARSER_READING_COMMAND;
         } else {
           throwException();
         }
-
+      } else if(currentCharacter == "{"){
+        if(state == PARSER_WAITING_TERMINATION){
+          state = PARSER_READING_ARRAY;
+        } else {
+          throwException();
+        }
+      } else if(characterStateMatch("}", PARSER_READING_ARRAY)){
+        state = PARSER_READING_COMMAND;
+        parameters.push_back(stringStack);
+        clearStringStack();
+        executeCurrentCommand();
       } else {
         stringStack += currentCharacter;
       }
 
+    }
+
+    void MapFileParser2::executeCurrentCommand(){
+      if(command == "setSpawn"){
+        cout << "Setting spawn";
+      }
+    }
+
+    void MapFileParser2::clearStringStack(){
+      stringStack = "";      
+    }
+
+    bool MapFileParser2::characterStateMatch(std::string character, PARSER_STATE stateToCheck){
+      if(currentCharacter != character){
+        return false;
+      }
+      if(state == stateToCheck){
+        return true;
+      } else {
+        throwException();
+      }
+      return false;
     }
 
     void MapFileParser2::throwException(){
