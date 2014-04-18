@@ -1,13 +1,13 @@
 #include "Exception.hpp"
 
-Exception::Exception(const char* message){
+Exception::Exception(std::string message){
   this->message = message; 
 }
 
 void Exception::print() {
-  printf(this->message);
+  //printf(this->message);
 }
 
-const char* Exception::getMessage() {
+std::string Exception::getMessage() {
   return this->message;
 }

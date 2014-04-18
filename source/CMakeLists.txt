@@ -12,6 +12,7 @@ add_executable(${EXE_NAME}
   engine/object/Model.cpp engine/object/Mesh.cpp
   engine/renderer/GameMapRenderer.cpp 
   map/MapFileParser.cpp
+  map/MapFileParser2.cpp
   util/ListFileParser.cpp
   util/ConfigFileParser.cpp
   util/audioplayer/AudioPlayer.cpp

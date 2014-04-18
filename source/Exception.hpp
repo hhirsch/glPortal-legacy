@@ -6,9 +6,9 @@ using namespace std;
 
 class Exception {
 public:
-  const char* message;
-  Exception(const char* message);
+  std::string message;
+  Exception(std::string message);
   void print();
-  const char* getMessage();
+  std::string getMessage();
 };
 #endif

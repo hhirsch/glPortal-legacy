@@ -113,7 +113,6 @@ namespace glPortal {
             }
             break;
           }
-        
         }
       }
       file.close();

@@ -17,7 +17,7 @@
 #include "engine/gui/GameScreen.hpp"
 #include "engine/tools/Timer.hpp"
 #include "GameMap.hpp"
-#include "map/MapFileParser.hpp"
+#include "map/MapFileParser2.hpp"
 #include "engine/Box.hpp"
 #include "engine/Environment.hpp"
 #include "engine/renderer/GameMapRenderer.hpp"

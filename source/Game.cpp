@@ -192,8 +192,13 @@ void Game::nextLevel() {
     gameMap.flush();
     gameMap.setIsLastScreen();
   } else {
-    MapFileParser parser;
-    gameMap = parser.getMapFromFile("data/maps/" + mapList.at(currentLevel) + ".map");
+    MapFileParser2 parser;
+    try{
+      gameMap = parser.getMapFromFile("data/maps/" + mapList.at(currentLevel) + ".map");
+    } catch(Exception e){
+      cout << e.getMessage();
+      exit(0);
+    }
     respawn();
     currentLevel++;
   }
