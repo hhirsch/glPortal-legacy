@@ -12,7 +12,10 @@ add_executable(${EXE_NAME}
   engine/object/Model.cpp engine/object/Mesh.cpp
   engine/renderer/GameMapRenderer.cpp 
   map/MapFileParser.cpp
-  map/MapFileParser2.cpp
+  map/parser/MapFileParser2.cpp
+  map/parser/EventType.hpp
+  map/parser/ParserState.hpp
+  map/parser/SyntaxConstraint.cpp
   util/ListFileParser.cpp
   util/ConfigFileParser.cpp
   util/audioplayer/AudioPlayer.cpp
@@ -21,10 +24,6 @@ add_executable(${EXE_NAME}
   Player.cpp GameMap.cpp Light.cpp 
   Shot.cpp Portal.cpp 
   Window.cpp Exception.cpp
-  )
-
-add_executable(map
-  map/Main.cpp map/MapToWavefront.cpp
   )
 
 add_custom_target(run COMMAND ./${EXE_NAME})

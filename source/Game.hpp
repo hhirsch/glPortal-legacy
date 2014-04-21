@@ -17,7 +17,7 @@
 #include "engine/gui/GameScreen.hpp"
 #include "engine/tools/Timer.hpp"
 #include "GameMap.hpp"
-#include "map/MapFileParser2.hpp"
+#include "map/parser/MapFileParser2.hpp"
 #include "engine/Box.hpp"
 #include "engine/Environment.hpp"
 #include "engine/renderer/GameMapRenderer.hpp"
@@ -36,6 +36,7 @@ using namespace glPortal::engine::object;
 using namespace glPortal::engine::tools;
 using namespace glPortal::engine::renderer;
 using namespace glPortal::map;
+using namespace glPortal::map::parser;
 using namespace glPortal::util;
 
 class Game {
