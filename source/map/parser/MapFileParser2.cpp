@@ -44,7 +44,7 @@ namespace glPortal {
     }
       
     void MapFileParser2::initializeSyntax(){
-      SyntaxConstraint brace, closingBrace, comma, semicolon;
+      SyntaxConstraint brace, closingBrace, comma, semicolon, curlyBrace, closingCurlyBrace;
       brace.addPrerequisiteState(ParserState::READING_COMMAND);
       brace.setResultState(ParserState::READING_PARAMETERS);
       brace.addEvent(EventType::COPY_BUFFER_TO_COMMAND);
@@ -57,12 +57,28 @@ namespace glPortal {
       closingBrace.addEvent(EventType::CLEAR_BUFFER);
       characterConstraints[")"] = closingBrace;
 
+      comma.addPrerequisiteState(ParserState::READING_PARAMETERS);
+      comma.addPrerequisiteState(ParserState::READING_ARRAY);
+      comma.setResultState(ParserState::PREVIOUS_STATE);
+      comma.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
+      comma.addEvent(EventType::CLEAR_BUFFER);
+      characterConstraints[","] = comma;
+
       semicolon.addPrerequisiteState(ParserState::WAITING_TERMINATION);
       semicolon.setResultState(ParserState::READING_COMMAND);
       semicolon.addEvent(EventType::CLEAR_BUFFER);
       semicolon.addEvent(EventType::EXECUTE);
       characterConstraints[";"] = semicolon;
 
+      curlyBrace.addPrerequisiteState(ParserState::WAITING_TERMINATION);
+      curlyBrace.setResultState(ParserState::READING_ARRAY);
+      characterConstraints["{"] = curlyBrace;
+
+      closingCurlyBrace.addPrerequisiteState(ParserState::READING_ARRAY);
+      closingCurlyBrace.setResultState(ParserState::READING_COMMAND);
+      closingCurlyBrace.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
+      closingCurlyBrace.addEvent(EventType::CLEAR_BUFFER);
+      characterConstraints["}"] = closingCurlyBrace;
     }
 
     void MapFileParser2::parse(std::ifstream &fileStream){
