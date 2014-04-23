@@ -11,15 +11,32 @@ namespace glPortal {
       }
 
       void SyntaxConstraint::addPrerequisiteState(ParserState state){
-        prerequisiteState.push_back(state);
+        prerequisiteStates.push_back(state);
       }
 
       void SyntaxConstraint::setResultState(ParserState state){
         resultState = state;
       }
 
+      ParserState SyntaxConstraint::getResultState(){
+        return resultState;
+      }
+
+      std::vector<ParserState> SyntaxConstraint::getPrerequisiteStates() {
+        return prerequisiteStates;
+      }
+
       std::vector<EventType> SyntaxConstraint::getEvents() {
         return events;
+      }
+
+      bool SyntaxConstraint::getIsValidPrerequisiteState(ParserState &state){
+        for(std::vector<ParserState>::iterator preState = prerequisiteStates.begin(); preState != prerequisiteStates.end(); ++preState) {
+          if(state == *preState){
+            return true;
+          }
+        }
+        return false;
       }
     }
   }

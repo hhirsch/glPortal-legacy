@@ -13,17 +13,6 @@
 
 using namespace glPortal::engine::object;
 
-enum PARSER_STATE { 
-PARSER_INITIAL_STATE,
-PARSER_READING_COMMAND, 
-PARSER_READING_PARAMETERS, 
-PARSER_WAITING_TERMINATION,
-PARSER_READING_ARRAY,
-PARSER_WAITING_COMMENT,
-PARSER_LONG_COMMENT,
-PARSER_COMMENT
-};
-
 namespace glPortal {
   namespace map{
     namespace parser{
@@ -37,14 +26,14 @@ namespace glPortal {
       float startpos[3];
       float cakepos[3];	
       Box cakeBox;
-      PARSER_STATE state;
+      ParserState state;
       int lineNumber = 0;
       std::string command, stringStack, currentCharacter;
       std::string currentPositionMessage;
       std::vector<std::string> parameters;
       void parse(std::ifstream &fileStream);
       void tokenize();
-      bool characterStateMatch(std::string character, PARSER_STATE stateToCheck);
+      bool characterStateMatch(std::string character, ParserState stateToCheck);
       bool skipLine = false;
       bool revertStatus = false;
       void initializeSyntax();

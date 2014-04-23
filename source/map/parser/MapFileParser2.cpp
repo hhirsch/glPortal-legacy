@@ -36,7 +36,7 @@ namespace glPortal {
       }
       
       while(fileStream.good()) {
-        state = PARSER_READING_COMMAND;
+        state = ParserState::READING_COMMAND;
         this->parse(fileStream);
         fileStream.close();
         return this->gameMap;
@@ -44,12 +44,25 @@ namespace glPortal {
     }
       
     void MapFileParser2::initializeSyntax(){
-      SyntaxConstraint brace, closingBrace, comma;
-      brace.addPrerequisiteState(ParserState::PARSER_READING_COMMAND);
-      brace.setResultState(ParserState::PARSER_READING_PARAMETERS);
+      SyntaxConstraint brace, closingBrace, comma, semicolon;
+      brace.addPrerequisiteState(ParserState::READING_COMMAND);
+      brace.setResultState(ParserState::READING_PARAMETERS);
       brace.addEvent(EventType::COPY_BUFFER_TO_COMMAND);
       brace.addEvent(EventType::CLEAR_BUFFER);
       characterConstraints["("] = brace;
+
+      closingBrace.addPrerequisiteState(ParserState::READING_PARAMETERS);
+      closingBrace.setResultState(ParserState::WAITING_TERMINATION);
+      closingBrace.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
+      closingBrace.addEvent(EventType::CLEAR_BUFFER);
+      characterConstraints[")"] = closingBrace;
+
+      semicolon.addPrerequisiteState(ParserState::WAITING_TERMINATION);
+      semicolon.setResultState(ParserState::READING_COMMAND);
+      semicolon.addEvent(EventType::CLEAR_BUFFER);
+      semicolon.addEvent(EventType::EXECUTE);
+      characterConstraints[";"] = semicolon;
+
     }
 
     void MapFileParser2::parse(std::ifstream &fileStream){
@@ -64,7 +77,7 @@ namespace glPortal {
 
         if(revertStatus){
           revertStatus = false;
-          state = PARSER_READING_COMMAND;
+          state = ParserState::READING_COMMAND;
         }
 
         if(line.length() > 0) {
@@ -84,6 +97,65 @@ namespace glPortal {
 
     void MapFileParser2::tokenize(){
       std::string message;
+      if(characterConstraints.find(currentCharacter) != characterConstraints.end()){
+        SyntaxConstraint constraint = characterConstraints.at(currentCharacter);
+        std::vector<ParserState> preStates = constraint.getPrerequisiteStates();
+        if(constraint.getIsValidPrerequisiteState(state)){
+            std::vector<EventType> events = constraint.getEvents();
+            for(std::vector<EventType>::iterator event = events.begin(); event != events.end(); ++event) {
+              switch(*event){
+              case EventType::COPY_BUFFER_TO_COMMAND:
+                command = stringStack;
+                break;
+              case EventType::CLEAR_BUFFER:
+                clearStringStack();
+                break;
+              case EventType::EXECUTE:
+                cout << command + "\n";
+                break;
+              default:
+                
+                break;
+              }
+            }
+        }
+        if(constraint.getResultState() != ParserState::PREVIOUS_STATE){
+          state = constraint.getResultState();
+        }
+      } else {
+        stringStack += currentCharacter;
+        //this->throwException();
+      }
+
+        //                  if(std::find(preStates.begin(), preStates.end(), state)!=preStates.end()){
+        //          }
+            /*
+            std::vector<EventType> events = constraint.getEvents();
+            for(std::vector<EventType>::iterator event = events.begin(); event != events.end(); ++event) {
+              switch(*event){
+              case EventType::COPY_BUFFER_TO_COMMAND:
+                command = stringStack;
+                break;
+              case EventType::CLEAR_BUFFER:
+                clearStringStack();
+                break;
+              default:
+                
+                break;
+                 }
+*/
+              //              if(*event == EventType::COPY_BUFFER_TO_COMMAND){
+              //  command = stringStack; 
+              ///}
+
+
+
+              //            }
+          
+      //     cout << command;
+          //}
+    
+      /*
       extractParameters();
       detectComments();
       if((state == PARSER_COMMENT) || (state == PARSER_WAITING_COMMENT) || (state == PARSER_LONG_COMMENT) || (skipLine == true)){
@@ -119,24 +191,25 @@ namespace glPortal {
       }
       //                  cout << currentCharacter;
       //    cout << " => " << parserStateStrings[state] << "\n";
+      */
     }
 
     void MapFileParser2::detectComments(){
       if(currentCharacter == "*"){
-        if(state == PARSER_WAITING_COMMENT){
-          state = PARSER_LONG_COMMENT;
+        if(state == ParserState::WAITING_COMMENT){
+          state = ParserState::LONG_COMMENT;
           skipLine = true;
         }
       }
       if(currentCharacter == "/"){
-        if(state == PARSER_READING_COMMAND){
-          state = PARSER_WAITING_COMMENT;
-        } else if(state == PARSER_WAITING_COMMENT){
-          state = PARSER_COMMENT;
+        if(state == ParserState::READING_COMMAND){
+          state = ParserState::WAITING_COMMENT;
+        } else if(state == ParserState::WAITING_COMMENT){
+          state = ParserState::COMMENT;
           skipLine = true;
           revertStatus = true;
-        } else if(state == PARSER_LONG_COMMENT){
-          state = PARSER_READING_COMMAND;
+        } else if(state == ParserState::LONG_COMMENT){
+          state = ParserState::READING_COMMAND;
           skipLine = true;
         } else {
           throwException();
@@ -146,7 +219,7 @@ namespace glPortal {
 
     void MapFileParser2::extractParameters(){
       if(currentCharacter == ","){
-        if(state == PARSER_READING_ARRAY || PARSER_READING_PARAMETERS){
+        if((state == ParserState::READING_ARRAY) || (state == ParserState::READING_PARAMETERS)){
           parameters.push_back(stringStack);
           clearStringStack();
         } else {
@@ -177,7 +250,7 @@ namespace glPortal {
       stringStack = "";      
     }
 
-    bool MapFileParser2::characterStateMatch(std::string character, PARSER_STATE stateToCheck){
+    bool MapFileParser2::characterStateMatch(std::string character, ParserState stateToCheck){
       if(currentCharacter != character){
         return false;
       }
@@ -190,7 +263,7 @@ namespace glPortal {
     }
 
     void MapFileParser2::throwException(){
-      std::string message = "Got \"" + currentCharacter + "\" while state was " + parserStateStrings[state] + ". "  + currentPositionMessage;
+      std::string message = "Got \"" + currentCharacter + "\" while state was " + parserStateStrings[(int)state] + ". "  + currentPositionMessage;
       throw Exception(message);
     }
     }
