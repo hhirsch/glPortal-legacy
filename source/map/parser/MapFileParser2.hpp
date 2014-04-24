@@ -18,7 +18,7 @@ namespace glPortal {
     namespace parser{
     class MapFileParser2{
     private:
-      std::map<std::string, SyntaxConstraint> characterConstraints;
+      std::map<std::string, std::vector<SyntaxConstraint> > characterConstraints;
       std::string fileName;
       GameMap gameMap;
       GLfloat lightpos[4];

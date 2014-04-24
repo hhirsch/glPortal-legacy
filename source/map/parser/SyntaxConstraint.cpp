@@ -2,6 +2,7 @@
 #include <vector>
 #include "EventType.hpp"
 #include "ParserState.hpp"
+#include <iostream>
 
 namespace glPortal {
   namespace map{
@@ -20,10 +21,6 @@ namespace glPortal {
 
       ParserState SyntaxConstraint::getResultState(){
         return resultState;
-      }
-
-      std::vector<ParserState> SyntaxConstraint::getPrerequisiteStates() {
-        return prerequisiteStates;
       }
 
       std::vector<EventType> SyntaxConstraint::getEvents() {

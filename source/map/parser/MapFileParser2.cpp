@@ -44,41 +44,67 @@ namespace glPortal {
     }
       
     void MapFileParser2::initializeSyntax(){
-      SyntaxConstraint brace, closingBrace, comma, semicolon, curlyBrace, closingCurlyBrace;
+      SyntaxConstraint brace, closingBrace, comma, 
+        semicolon, curlyBrace, closingCurlyBrace,
+        commentInit, comment, longComment;
       brace.addPrerequisiteState(ParserState::READING_COMMAND);
       brace.setResultState(ParserState::READING_PARAMETERS);
       brace.addEvent(EventType::COPY_BUFFER_TO_COMMAND);
       brace.addEvent(EventType::CLEAR_BUFFER);
-      characterConstraints["("] = brace;
+      vector<SyntaxConstraint> braceVector;
+      braceVector.push_back(brace);
+      characterConstraints["("] = braceVector;
 
       closingBrace.addPrerequisiteState(ParserState::READING_PARAMETERS);
       closingBrace.setResultState(ParserState::WAITING_TERMINATION);
       closingBrace.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
       closingBrace.addEvent(EventType::CLEAR_BUFFER);
-      characterConstraints[")"] = closingBrace;
+      vector<SyntaxConstraint> closingBraceVector;
+      closingBraceVector.push_back(closingBrace);
+      characterConstraints[")"] = closingBraceVector;
 
       comma.addPrerequisiteState(ParserState::READING_PARAMETERS);
       comma.addPrerequisiteState(ParserState::READING_ARRAY);
       comma.setResultState(ParserState::PREVIOUS_STATE);
       comma.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
       comma.addEvent(EventType::CLEAR_BUFFER);
-      characterConstraints[","] = comma;
+      vector<SyntaxConstraint> commaVector;
+      commaVector.push_back(comma);
+      characterConstraints[","] = commaVector;
 
       semicolon.addPrerequisiteState(ParserState::WAITING_TERMINATION);
       semicolon.setResultState(ParserState::READING_COMMAND);
       semicolon.addEvent(EventType::CLEAR_BUFFER);
       semicolon.addEvent(EventType::EXECUTE);
-      characterConstraints[";"] = semicolon;
+      vector<SyntaxConstraint> semicolonVector;
+      semicolonVector.push_back(semicolon);
+      characterConstraints[";"] = semicolonVector;
 
       curlyBrace.addPrerequisiteState(ParserState::WAITING_TERMINATION);
       curlyBrace.setResultState(ParserState::READING_ARRAY);
-      characterConstraints["{"] = curlyBrace;
+      vector<SyntaxConstraint> curlyBraceVector;
+      curlyBraceVector.push_back(curlyBrace);
+      characterConstraints["{"] = curlyBraceVector;
 
       closingCurlyBrace.addPrerequisiteState(ParserState::READING_ARRAY);
       closingCurlyBrace.setResultState(ParserState::READING_COMMAND);
       closingCurlyBrace.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
       closingCurlyBrace.addEvent(EventType::CLEAR_BUFFER);
-      characterConstraints["}"] = closingCurlyBrace;
+      closingCurlyBrace.addEvent(EventType::EXECUTE);
+      vector<SyntaxConstraint> closingCurlyBraceVector;
+      curlyBraceVector.push_back(closingCurlyBrace);
+      characterConstraints["}"] = closingCurlyBraceVector;
+      /*
+      commentInit.addPrerequisiteState(ParserState::READING_COMMAND);
+      commentInit.setResultState(ParserState::WAITING_COMMENT);
+      vector<SyntaxConstraint> commentInitVector;
+      commentInitVector.push_back(commentInit);
+      characterConstraints["/"] = commentInitVector; */
+      /*
+      commentInit.addPrerequisiteState(ParserState::WAITING_COMMENT);
+      commentInit.setResultState(ParserState::LONG_COMMENT);
+      vector<SyntaxConstraint> commentInitVector;
+      characterConstraints["*"] = commentInit;*/
     }
 
     void MapFileParser2::parse(std::ifstream &fileStream){
@@ -114,10 +140,55 @@ namespace glPortal {
     void MapFileParser2::tokenize(){
       std::string message;
       if(characterConstraints.find(currentCharacter) != characterConstraints.end()){
-        SyntaxConstraint constraint = characterConstraints.at(currentCharacter);
-        std::vector<ParserState> preStates = constraint.getPrerequisiteStates();
-        if(constraint.getIsValidPrerequisiteState(state)){
+        std::vector<SyntaxConstraint> constraintVector = characterConstraints.at(currentCharacter);
+        bool hasValidState = false;
+        for (int i=0; i<constraintVector.size(); i++) {
+          //          cout << (int)constraintVector[i].getResultState() << endl;
+          //          SyntaxConstraint constraint = characterConstraints.at(i);
+          SyntaxConstraint constraint = constraintVector[i];
+          //          std::vector<ParserState> preStates = constraint.getPrerequisiteStates();
+          if(constraint.getIsValidPrerequisiteState(state)){
+            hasValidState = true;
             std::vector<EventType> events = constraint.getEvents();
+            for(std::vector<EventType>::iterator event = events.begin(); event != events.end(); ++event) {
+            //            cout << events.size() << " #";
+            //for (int i=0; i<events.size(); i++) {
+              //cout << (int)events[2];
+              //  cout << "KJHGLKHJ";
+              switch(*event){
+                //   switch(events[i]){
+              case EventType::COPY_BUFFER_TO_COMMAND:
+                //                                cout << "copy";
+                command = stringStack;
+                break;
+              case EventType::CLEAR_BUFFER:
+                //                                cout << "clear";
+                clearStringStack();
+                break;
+              case EventType::EXECUTE:
+                cout << "exe";
+                cout << command + "\n";
+                break;
+              default:
+                //                cout << "default\n";
+                //                cout << (int)events[i] << "xxx";
+                //                cout << (int)*event;
+                break;
+              }
+            }
+          }         
+        } 
+
+        if(!hasValidState){
+          throwException();
+        }
+
+        //cout << (int)constraintVector.at(0).getResultState();
+        /* for(std::vector<SyntaxConstraint>::iterator constraint = constraintVector.begin(); constraint != constraintVector.end(); ++constraint) {
+        //SyntaxConstraint constraint = characterConstraints.at(currentCharacter);
+                 std::vector<ParserState> preStates = *constraint.getPrerequisiteStates();
+          if(constraint.getIsValidPrerequisiteState(state)){
+            std::vector<EventType> events = *constraint.getEvents();
             for(std::vector<EventType>::iterator event = events.begin(); event != events.end(); ++event) {
               switch(*event){
               case EventType::COPY_BUFFER_TO_COMMAND:
@@ -134,12 +205,13 @@ namespace glPortal {
                 break;
               }
             }
+          }
         }
         if(constraint.getResultState() != ParserState::PREVIOUS_STATE){
           state = constraint.getResultState();
-        }
+          } */
       } else {
-        stringStack += currentCharacter;
+      stringStack += currentCharacter; 
         //this->throwException();
       }
 

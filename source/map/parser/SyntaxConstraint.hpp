@@ -11,7 +11,6 @@ namespace glPortal {
       public:
         void addEvent(EventType event);
         void addPrerequisiteState(ParserState state);
-        std::vector<ParserState> getPrerequisiteStates();
         void setResultState(ParserState state);
         ParserState getResultState();
         bool getIsValidPrerequisiteState(ParserState &state);
