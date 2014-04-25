@@ -7,6 +7,7 @@
 #include <map>
 #include "../../GameMap.hpp"
 #include "../../engine/object/Model.hpp"
+#include "SyntaxConstraintFactory.hpp"
 #include "SyntaxConstraint.hpp"
 #include "EventType.hpp"
 #include "ParserState.hpp"
