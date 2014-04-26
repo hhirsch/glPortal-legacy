@@ -21,6 +21,15 @@ TEST(getIsValidPrerequisiteStateForMultipleStates)
   CHECK(constraint.getIsValidPrerequisiteState(state));
 }
 
+TEST(getIsValidPrerequisiteStateForClosingCurlyBrace)
+{
+  SyntaxConstraint constraint;
+  ParserState state = ParserState::READING_ARRAY;
+  constraint.addPrerequisiteState(ParserState::READING_ARRAY);
+  CHECK(constraint.getIsValidPrerequisiteState(state));
+}
+
+
 int main()
 {
   return UnitTest::RunAllTests();

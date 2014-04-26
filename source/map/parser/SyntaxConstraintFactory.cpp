@@ -58,19 +58,27 @@ namespace glPortal {
         closingCurlyBrace.addEvent(EventType::CLEAR_BUFFER);
         closingCurlyBrace.addEvent(EventType::EXECUTE);
         std::vector<SyntaxConstraint> closingCurlyBraceVector;
-        curlyBraceVector.push_back(closingCurlyBrace);
+        closingCurlyBraceVector.push_back(closingCurlyBrace);
         characterConstraints["}"] = closingCurlyBraceVector;
-        /*
-          commentInit.addPrerequisiteState(ParserState::READING_COMMAND);
-          commentInit.setResultState(ParserState::WAITING_COMMENT);
-          vector<SyntaxConstraint> commentInitVector;
-          commentInitVector.push_back(commentInit);
-          characterConstraints["/"] = commentInitVector; */
-        /*
-          commentInit.addPrerequisiteState(ParserState::WAITING_COMMENT);
-          commentInit.setResultState(ParserState::LONG_COMMENT);
-          vector<SyntaxConstraint> commentInitVector;
-          characterConstraints["*"] = commentInit;*/
+
+        
+        commentInit.addPrerequisiteState(ParserState::READING_COMMAND);
+        commentInit.setResultState(ParserState::WAITING_COMMENT);
+        vector<SyntaxConstraint> commentInitVector;
+        commentInitVector.push_back(commentInit);
+        characterConstraints["/"] = commentInitVector; 
+        
+        longComment.addPrerequisiteState(ParserState::WAITING_COMMENT);
+        longComment.setResultState(ParserState::LONG_COMMENT);
+        vector<SyntaxConstraint> longCommentVector;
+        characterConstraints["*"] = longCommentVector;
+
+        longCommentClose.addPrerequisiteState(ParserState::WAITING_COMMENT);
+        longCommentClose.setResultState(ParserState::LONG_COMMENT);
+        vector<SyntaxConstraint> commentInitVector;
+        characterConstraints["*"] = commentInit;
+
+
         return characterConstraints;
       }
     }

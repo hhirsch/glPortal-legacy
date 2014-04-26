@@ -34,16 +34,15 @@ namespace glPortal {
       std::vector<std::string> parameters;
       void parse(std::ifstream &fileStream);
       void tokenize();
-      bool characterStateMatch(std::string character, ParserState stateToCheck);
       bool skipLine = false;
       bool revertStatus = false;
       void initializeSyntax();
-      void detectComments();
       void clearStringStack();
+      void executeEvent(EventType event);
       void executeCurrentCommand();
-      void extractParameters();
       void throwException();
-      std::string parserStateStrings[8] = {
+      std::string parserStateStrings[9] = {
+        "PREVIOUS STATE",
         "INITIAL STATE","READING COMMAND","READING PARAMETERS", 
         "AWAITING TERMINATION OR ARRAY", "READING ARRAY",
         "COMMENT INDICATION", "LONG COMMENT", "COMMENT"
