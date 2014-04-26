@@ -12,7 +12,7 @@ namespace glPortal {
         std::map<std::string, std::vector<SyntaxConstraint> > characterConstraints;
         SyntaxConstraint brace, closingBrace, comma, 
           semicolon, curlyBrace, closingCurlyBrace,
-          commentInit, comment, longComment;
+          commentInit, comment, longComment, longCommentClose;
         brace.addPrerequisiteState(ParserState::READING_COMMAND);
         brace.setResultState(ParserState::READING_PARAMETERS);
         brace.addEvent(EventType::COPY_BUFFER_TO_COMMAND);
@@ -60,24 +60,27 @@ namespace glPortal {
         std::vector<SyntaxConstraint> closingCurlyBraceVector;
         closingCurlyBraceVector.push_back(closingCurlyBrace);
         characterConstraints["}"] = closingCurlyBraceVector;
-
         
         commentInit.addPrerequisiteState(ParserState::READING_COMMAND);
         commentInit.setResultState(ParserState::WAITING_COMMENT);
-        vector<SyntaxConstraint> commentInitVector;
+        comment.addPrerequisiteState(ParserState::WAITING_COMMENT);
+        comment.setResultState(ParserState::COMMENT);
+        comment.addEvent(EventType::IGNORE_LINE);
+        std::vector<SyntaxConstraint> commentInitVector;
         commentInitVector.push_back(commentInit);
+        commentInitVector.push_back(comment);
         characterConstraints["/"] = commentInitVector; 
         
         longComment.addPrerequisiteState(ParserState::WAITING_COMMENT);
         longComment.setResultState(ParserState::LONG_COMMENT);
-        vector<SyntaxConstraint> longCommentVector;
+        longComment.addEvent(EventType::IGNORE);
+        std::vector<SyntaxConstraint> longCommentVector;
+        longCommentClose.addPrerequisiteState(ParserState::LONG_COMMENT);
+        longCommentClose.setResultState(ParserState::READING_COMMAND);
+        longComment.addEvent(EventType::IGNORE_END);
+        longCommentVector.push_back(longComment);
+        longCommentVector.push_back(longCommentClose);
         characterConstraints["*"] = longCommentVector;
-
-        longCommentClose.addPrerequisiteState(ParserState::WAITING_COMMENT);
-        longCommentClose.setResultState(ParserState::LONG_COMMENT);
-        vector<SyntaxConstraint> commentInitVector;
-        characterConstraints["*"] = commentInit;
-
 
         return characterConstraints;
       }

@@ -55,14 +55,6 @@ namespace glPortal {
           lineNumber++;
           currentPositionMessage = "On line " + std::to_string(lineNumber) + " in file " + this->fileName + ".";
           std::istringstream iss(line);
-          if(skipLine){
-            skipLine = false;
-          }
-
-          if(revertStatus){
-            revertStatus = false;
-            state = ParserState::READING_COMMAND;
-          }
 
           if(line.length() > 0) {
             for(int i = 0; i <= line.length(); i++){
@@ -81,7 +73,8 @@ namespace glPortal {
 
       void MapFileParser2::tokenize(){
         std::string message;
-        if(characterConstraints.find(currentCharacter) != characterConstraints.end()){
+        ParserState newState;
+        if((characterConstraints.find(currentCharacter) != characterConstraints.end())){
           cout << "\n";
           std::vector<SyntaxConstraint> constraintVector = characterConstraints.at(currentCharacter);
           bool hasValidState = false;
@@ -109,17 +102,19 @@ namespace glPortal {
                   cout << parserStateStrings[(int)constraint.getResultState()] << "\n";
                 }
               }
-              if(constraint.getResultState() == ParserState::PREVIOUS_STATE){
-              } else {
-                state = constraint.getResultState();
-              }
+              newState = constraint.getResultState();
             }         
           } 
+          
+          if(newState == ParserState::PREVIOUS_STATE){
+          } else {
+            state = newState;
+          }
 
-          if(!hasValidState){
+          if((!hasValidState) && (skipLine == false)){
             throwException();
           }
-        } else if(currentCharacter != " "){
+        } else if((currentCharacter != " ") && (skipLine == false)){
           stringStack += currentCharacter; 
         }
       }
