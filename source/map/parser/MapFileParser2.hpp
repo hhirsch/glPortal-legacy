@@ -20,6 +20,7 @@ namespace glPortal {
     class MapFileParser2{
     private:
       std::map<std::string, std::vector<SyntaxConstraint> > characterConstraints;
+      std::map<std::string, std::vector<SyntaxConstraint> > characterConstraintsComments;
       std::string fileName;
       GameMap gameMap;
       GLfloat lightpos[4];
@@ -41,11 +42,11 @@ namespace glPortal {
       void executeEvent(EventType event);
       void executeCurrentCommand();
       void throwException();
-      std::string parserStateStrings[9] = {
+      std::string parserStateStrings[10] = {
         "PREVIOUS STATE",
         "INITIAL STATE","READING COMMAND","READING PARAMETERS", 
         "AWAITING TERMINATION OR ARRAY", "READING ARRAY",
-        "COMMENT INDICATION", "LONG COMMENT", "COMMENT"
+        "COMMENT INDICATION", "LONG COMMENT", "COMMENT", "LONG COMMENT AWAITING TERMINATION"
       };
       const std::string NO_FILE_MESSAGE = "Unable to load map. File does not exist";
     public:

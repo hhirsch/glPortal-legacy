@@ -13,6 +13,7 @@ namespace glPortal {
       class SyntaxConstraintFactory {
       public:
         static std::map<std::string, std::vector<SyntaxConstraint> > getCLikeCharacterMap();
+        static std::map<std::string, std::vector<SyntaxConstraint> > getCLikeCharacterMapComment();
       };
     }
   }

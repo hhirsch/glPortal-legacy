@@ -47,6 +47,7 @@ namespace glPortal {
       
       void MapFileParser2::initializeSyntax(){
         characterConstraints = SyntaxConstraintFactory::getCLikeCharacterMap();
+        characterConstraintsComments = SyntaxConstraintFactory::getCLikeCharacterMapComment();
       }
 
       void MapFileParser2::parse(std::ifstream &fileStream){
@@ -74,49 +75,59 @@ namespace glPortal {
       void MapFileParser2::tokenize(){
         std::string message;
         ParserState newState;
-        if((characterConstraints.find(currentCharacter) != characterConstraints.end())){
-          cout << "\n";
-          std::vector<SyntaxConstraint> constraintVector = characterConstraints.at(currentCharacter);
-          bool hasValidState = false;
-          if(Environment::DEBUG){
-            cout << "char found in map." << "\n";
-            cout << "char: " << currentCharacter << "\n";
-            cout << "before_state: " << parserStateStrings[(int)state] << "\n";
-          }
-          for (int i=0; i<constraintVector.size(); i++) {
-            SyntaxConstraint constraint = constraintVector[i];
-            if(Environment::DEBUG){
-              cout << "state: " << parserStateStrings[(int)state] << "\n";
-            }
-            if(constraint.getIsValidPrerequisiteState(state)){
-              hasValidState = true;
-              if(Environment::DEBUG){
-                cout << "-> Detected valid state. \n";
-              }
-              std::vector<EventType> events = constraint.getEvents();
-
-              for(std::vector<EventType>::iterator event = events.begin(); event != events.end(); ++event) {
-                executeEvent(*event);
-                if(Environment::DEBUG){
-                  cout << "switching: " << parserStateStrings[(int)state] << " to ";
-                  cout << parserStateStrings[(int)constraint.getResultState()] << "\n";
-                }
-              }
-              newState = constraint.getResultState();
-            }         
-          } 
+        if((state == ParserState::COMMENT) ||
+           (state == ParserState::WAITING_COMMENT) ||
+           (state == ParserState::LONG_COMMENT) ||
+           (state == ParserState::LONG_COMMENT_WAITING_TERMINATION)
+           ){
           
-          if(newState == ParserState::PREVIOUS_STATE){
-          } else {
-            state = newState;
+        } else {
+          if((characterConstraints.find(currentCharacter) != characterConstraints.end())){
+            cout << "\n";
+            std::vector<SyntaxConstraint> constraintVector = characterConstraints.at(currentCharacter);
+            bool hasValidState = false;
+            if(Environment::DEBUG){
+              cout << "char found in map." << "\n";
+              cout << "char: " << currentCharacter << "\n";
+              cout << "before_state: " << parserStateStrings[(int)state] << "\n";
+            }
+            for (int i=0; i<constraintVector.size(); i++) {
+              SyntaxConstraint constraint = constraintVector[i];
+              if(Environment::DEBUG){
+                cout << "state: " << parserStateStrings[(int)state] << "\n";
+              }
+              if(constraint.getIsValidPrerequisiteState(state)){
+                hasValidState = true;
+                if(Environment::DEBUG){
+                  cout << "-> Detected valid state. \n";
+                }
+                std::vector<EventType> events = constraint.getEvents();
+
+                for(std::vector<EventType>::iterator event = events.begin(); event != events.end(); ++event) {
+                  executeEvent(*event);
+                  if(Environment::DEBUG){
+                    cout << "switching: " << parserStateStrings[(int)state] << " to ";
+                    cout << parserStateStrings[(int)constraint.getResultState()] << "\n";
+                  }
+                }
+                newState = constraint.getResultState();
+              }         
+            } 
+          
+            if(newState == ParserState::PREVIOUS_STATE){
+            } else {
+              state = newState;
+            }
+
+            if((!hasValidState) && (skipLine == false)){
+              throwException();
+            }
+          } else if(currentCharacter != " "){
+            stringStack += currentCharacter; 
           }
 
-          if((!hasValidState) && (skipLine == false)){
-            throwException();
-          }
-        } else if((currentCharacter != " ") && (skipLine == false)){
-          stringStack += currentCharacter; 
         }
+        
       }
 
       void MapFileParser2::executeEvent(EventType event){
@@ -128,7 +139,7 @@ namespace glPortal {
         case EventType::CLEAR_BUFFER:
           //                                cout << "clear";
           clearStringStack();
-                  break;
+          break;
         case EventType::EXECUTE:
           if(Environment::DEBUG){
             cout << "command found: " << command << "\n";

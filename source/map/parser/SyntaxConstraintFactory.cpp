@@ -84,6 +84,26 @@ namespace glPortal {
 
         return characterConstraints;
       }
+
+      std::map<std::string, std::vector<SyntaxConstraint> > SyntaxConstraintFactory::getCLikeCharacterMapComment(){
+        std::map<std::string, std::vector<SyntaxConstraint> > characterConstraints;
+        SyntaxConstraint longCommentClose, longCommentTermination;
+                
+        std::vector<SyntaxConstraint> longCommentVector;
+        longCommentClose.addPrerequisiteState(ParserState::LONG_COMMENT);
+        longCommentClose.setResultState(ParserState::LONG_COMMENT_WAITING_TERMINATION);
+        longCommentVector.push_back(longCommentClose);
+        characterConstraints["*"] = longCommentVector;
+
+        longCommentTermination.addPrerequisiteState(ParserState::LONG_COMMENT_WAITING_TERMINATION);
+        longCommentTermination.setResultState(ParserState::READING_COMMAND);
+        std::vector<SyntaxConstraint> longCommentTerminationVector;
+        longCommentTerminationVector.push_back(longCommentTermination);
+        characterConstraints["/"] = longCommentTerminationVector; 
+
+
+        return characterConstraints;
+      }
     }
   }
 }
