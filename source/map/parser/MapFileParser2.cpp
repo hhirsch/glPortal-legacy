@@ -15,6 +15,7 @@
 #include "EventType.hpp"
 #include "ParserState.hpp"
 #include "SyntaxConstraintFactory.hpp"
+#include "SyntaxConstraint.hpp"
 
 namespace glPortal {
   namespace map{
@@ -74,62 +75,68 @@ namespace glPortal {
 
       void MapFileParser2::tokenize(){
         std::string message;
-        ParserState newState;
         if((state == ParserState::COMMENT) ||
            (state == ParserState::WAITING_COMMENT) ||
            (state == ParserState::LONG_COMMENT) ||
            (state == ParserState::LONG_COMMENT_WAITING_TERMINATION)
            ){
-          
+          executeConstraint(characterConstraintsComments);
         } else {
-          if((characterConstraints.find(currentCharacter) != characterConstraints.end())){
-            cout << "\n";
-            std::vector<SyntaxConstraint> constraintVector = characterConstraints.at(currentCharacter);
-            bool hasValidState = false;
-            if(Environment::DEBUG){
-              cout << "char found in map." << "\n";
-              cout << "char: " << currentCharacter << "\n";
-              cout << "before_state: " << parserStateStrings[(int)state] << "\n";
-            }
-            for (int i=0; i<constraintVector.size(); i++) {
-              SyntaxConstraint constraint = constraintVector[i];
-              if(Environment::DEBUG){
-                cout << "state: " << parserStateStrings[(int)state] << "\n";
-              }
-              if(constraint.getIsValidPrerequisiteState(state)){
-                hasValidState = true;
-                if(Environment::DEBUG){
-                  cout << "-> Detected valid state. \n";
-                }
-                std::vector<EventType> events = constraint.getEvents();
-
-                for(std::vector<EventType>::iterator event = events.begin(); event != events.end(); ++event) {
-                  executeEvent(*event);
-                  if(Environment::DEBUG){
-                    cout << "switching: " << parserStateStrings[(int)state] << " to ";
-                    cout << parserStateStrings[(int)constraint.getResultState()] << "\n";
-                  }
-                }
-                newState = constraint.getResultState();
-              }         
-            } 
-          
-            if(newState == ParserState::PREVIOUS_STATE){
-            } else {
-              state = newState;
-            }
-
-            if((!hasValidState) && (skipLine == false)){
-              throwException();
-            }
-          } else if(currentCharacter != " "){
+          if(currentCharacter != " "){
             stringStack += currentCharacter; 
           }
 
+          executeConstraint(characterConstraints);
         }
-        
       }
+    
 
+      void MapFileParser2::executeConstraint(std::map<std::string, std::vector<SyntaxConstraint> > &constraintMap){
+        ParserState newState;
+        if((constraintMap.find(currentCharacter) != constraintMap.end())){
+          cout << "\n";
+          std::vector<SyntaxConstraint> constraintVector = constraintMap.at(currentCharacter);
+          bool hasValidState = false;
+          if(Environment::DEBUG){
+            cout << "char found in map." << "\n";
+            cout << "char: " << currentCharacter << "\n";
+            cout << "before_state: " << parserStateStrings[(int)state] << "\n";
+          }
+          if(Environment::DEBUG){
+            cout << "state: " << parserStateStrings[(int)state] << "\n";
+          }
+
+          for (int i=0; i<constraintVector.size(); i++) {
+            SyntaxConstraint constraint = constraintVector[i];
+            if(constraint.getIsValidPrerequisiteState(state)){
+              hasValidState = true;
+              if(Environment::DEBUG){
+                cout << "-> Detected valid state. \n";
+              }
+              std::vector<EventType> events = constraint.getEvents();
+              
+              for(std::vector<EventType>::iterator event = events.begin(); event != events.end(); ++event) {
+                executeEvent(*event);
+              }
+              if(Environment::DEBUG){
+                cout << "switching: " << parserStateStrings[(int)state] << " to ";
+                cout << parserStateStrings[(int)constraint.getResultState()] << "\n";
+              }
+              newState = constraint.getResultState();
+            }
+          } 
+          
+          if(newState == ParserState::PREVIOUS_STATE){
+          } else {
+            state = newState;
+          }
+          
+          if((!hasValidState)){
+            throwException();
+          }
+        }
+      }
+  
       void MapFileParser2::executeEvent(EventType event){
         switch(event){
         case EventType::COPY_BUFFER_TO_COMMAND:

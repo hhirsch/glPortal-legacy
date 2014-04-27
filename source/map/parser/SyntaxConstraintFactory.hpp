@@ -10,6 +10,7 @@
 namespace glPortal {
   namespace map{
     namespace parser{
+      typedef std::map<std::string, std::vector<SyntaxConstraint> > CharacterConstraintMap;
       class SyntaxConstraintFactory {
       public:
         static std::map<std::string, std::vector<SyntaxConstraint> > getCLikeCharacterMap();
