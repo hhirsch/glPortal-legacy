@@ -66,6 +66,7 @@ namespace glPortal {
         comment.addPrerequisiteState(ParserState::WAITING_COMMENT);
         comment.setResultState(ParserState::COMMENT);
         comment.addEvent(EventType::IGNORE_LINE);
+        comment.addEvent(EventType::CLEAR_BUFFER);
         std::vector<SyntaxConstraint> commentInitVector;
         commentInitVector.push_back(commentInit);
         //commentInitVector.push_back(comment);
@@ -87,20 +88,25 @@ namespace glPortal {
 
       std::map<std::string, std::vector<SyntaxConstraint> > SyntaxConstraintFactory::getCLikeCharacterMapComment(){
         std::map<std::string, std::vector<SyntaxConstraint> > characterConstraints;
-        SyntaxConstraint longCommentClose, longCommentTermination, comment;
+        SyntaxConstraint longComment, longCommentClose, longCommentTermination, comment;
                 
         std::vector<SyntaxConstraint> longCommentVector;
+        longComment.addPrerequisiteState(ParserState::WAITING_COMMENT);
+        longComment.setResultState(ParserState::LONG_COMMENT);
         longCommentClose.addPrerequisiteState(ParserState::LONG_COMMENT);
         longCommentClose.setResultState(ParserState::LONG_COMMENT_WAITING_TERMINATION);
         longCommentVector.push_back(longCommentClose);
+        longCommentVector.push_back(longComment);
         characterConstraints["*"] = longCommentVector;
 
         longCommentTermination.addPrerequisiteState(ParserState::LONG_COMMENT_WAITING_TERMINATION);
         longCommentTermination.setResultState(ParserState::READING_COMMAND);
+        longCommentTermination.addEvent(EventType::CLEAR_BUFFER);
 
         comment.addPrerequisiteState(ParserState::WAITING_COMMENT);
         comment.setResultState(ParserState::COMMENT);
         comment.addEvent(EventType::IGNORE_LINE);
+        comment.addEvent(EventType::CLEAR_BUFFER);
 
         std::vector<SyntaxConstraint> longCommentTerminationVector;
         longCommentTerminationVector.push_back(longCommentTermination);

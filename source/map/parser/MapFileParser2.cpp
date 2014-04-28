@@ -54,6 +54,9 @@ namespace glPortal {
       void MapFileParser2::parse(std::ifstream &fileStream){
         std::string line, string;
         while(std::getline(fileStream, line)){
+          if(state == ParserState::COMMENT){
+            state = ParserState::READING_COMMAND;
+          }
           lineNumber++;
           currentPositionMessage = "On line " + std::to_string(lineNumber) + " in file " + this->fileName + ".";
           std::istringstream iss(line);
@@ -82,16 +85,15 @@ namespace glPortal {
            ){
           executeConstraint(characterConstraintsComments);
         } else {
-          if(currentCharacter != " "){
+          if((!executeConstraint(characterConstraints)) && (currentCharacter != " ")){
             stringStack += currentCharacter; 
           }
 
-          executeConstraint(characterConstraints);
         }
       }
     
 
-      void MapFileParser2::executeConstraint(std::map<std::string, std::vector<SyntaxConstraint> > &constraintMap){
+      bool MapFileParser2::executeConstraint(std::map<std::string, std::vector<SyntaxConstraint> > &constraintMap){
         ParserState newState;
         if((constraintMap.find(currentCharacter) != constraintMap.end())){
           cout << "\n";
@@ -134,6 +136,14 @@ namespace glPortal {
           if((!hasValidState)){
             throwException();
           }
+
+          return true;
+        } else {
+          // If there is no termination of the long comment, the comment is going on
+          if(state == ParserState::LONG_COMMENT_WAITING_TERMINATION){
+            state = ParserState::LONG_COMMENT;
+          }
+          return false;
         }
       }
   

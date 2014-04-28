@@ -21,7 +21,7 @@ namespace glPortal {
     private:
       std::map<std::string, std::vector<SyntaxConstraint> > characterConstraints;
       std::map<std::string, std::vector<SyntaxConstraint> > characterConstraintsComments;
-      void executeConstraint(std::map<std::string, std::vector<SyntaxConstraint> > &constraintMap);
+      bool executeConstraint(std::map<std::string, std::vector<SyntaxConstraint> > &constraintMap);
       std::string fileName;
       GameMap gameMap;
       GLfloat lightpos[4];
