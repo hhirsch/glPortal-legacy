@@ -116,6 +116,41 @@ namespace glPortal {
 
         return characterConstraints;
       }
+
+      std::map<std::string, std::vector<SyntaxConstraint> > SyntaxConstraintFactory::getCLikeCharacterMapArray(){
+        std::map<std::string, std::vector<SyntaxConstraint> > characterConstraints;
+        SyntaxConstraint array, comma, whiteSpace, brace;
+                
+        comma.addPrerequisiteState(ParserState::READING_PARAMETERS);
+        comma.addPrerequisiteState(ParserState::READING_ARRAY);
+        comma.setResultState(ParserState::PREVIOUS_STATE);
+        comma.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
+        comma.addEvent(EventType::CLEAR_BUFFER);
+        std::vector<SyntaxConstraint> commaVector;
+        commaVector.push_back(comma);
+        characterConstraints[","] = commaVector;
+        
+        whiteSpace.addPrerequisiteState(ParserState::READING_PARAMETERS);
+        whiteSpace.addPrerequisiteState(ParserState::READING_ARRAY);
+        whiteSpace.setResultState(ParserState::PREVIOUS_STATE);
+        whiteSpace.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
+        whiteSpace.addEvent(EventType::CLEAR_BUFFER);
+        std::vector<SyntaxConstraint> whiteSpaceVector;
+        commaVector.push_back(whiteSpace);
+        characterConstraints["whitespace"] = whiteSpaceVector;
+
+        brace.addPrerequisiteState(ParserState::READING_PARAMETERS);
+        brace.addPrerequisiteState(ParserState::READING_ARRAY);
+        brace.setResultState(ParserState::PREVIOUS_STATE);
+        brace.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
+        brace.addEvent(EventType::CLEAR_BUFFER);
+        std::vector<SyntaxConstraint> braceVector;
+        braceVector.push_back(brace);
+        characterConstraints[">"] = braceVector;
+
+        return characterConstraints;
+      }
+
     }
   }
 }

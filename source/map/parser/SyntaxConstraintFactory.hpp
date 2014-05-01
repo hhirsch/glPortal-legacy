@@ -15,6 +15,7 @@ namespace glPortal {
       public:
         static std::map<std::string, std::vector<SyntaxConstraint> > getCLikeCharacterMap();
         static std::map<std::string, std::vector<SyntaxConstraint> > getCLikeCharacterMapComment();
+        static std::map<std::string, std::vector<SyntaxConstraint> > getCLikeCharacterMapArray();
       };
     }
   }

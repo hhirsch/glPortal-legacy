@@ -19,8 +19,11 @@ namespace glPortal {
     namespace parser{
     class MapFileParser2{
     private:
+      bool debug = false;
+      bool debugCommands = false;
       std::map<std::string, std::vector<SyntaxConstraint> > characterConstraints;
       std::map<std::string, std::vector<SyntaxConstraint> > characterConstraintsComments;
+      std::map<std::string, std::vector<SyntaxConstraint> > characterConstraintsArray;
       bool executeConstraint(std::map<std::string, std::vector<SyntaxConstraint> > &constraintMap);
       std::string fileName;
       GameMap gameMap;

@@ -49,9 +49,14 @@ namespace glPortal {
       void MapFileParser2::initializeSyntax(){
         characterConstraints = SyntaxConstraintFactory::getCLikeCharacterMap();
         characterConstraintsComments = SyntaxConstraintFactory::getCLikeCharacterMapComment();
+        characterConstraintsArray = SyntaxConstraintFactory::getCLikeCharacterMapArray();
       }
 
       void MapFileParser2::parse(std::ifstream &fileStream){
+        if(Environment::DEBUG){
+          //debug = true;
+          debugCommands = true;
+        }
         std::string line, string;
         while(std::getline(fileStream, line)){
           if(state == ParserState::COMMENT){
@@ -84,6 +89,8 @@ namespace glPortal {
            (state == ParserState::LONG_COMMENT_WAITING_TERMINATION)
            ){
           executeConstraint(characterConstraintsComments);
+        } else if(state == ParserState::READING_ARRAY){
+          executeConstraint(characterConstraintsArray);
         } else {
           if((!executeConstraint(characterConstraints)) && (currentCharacter != " ")){
             stringStack += currentCharacter; 
@@ -96,43 +103,50 @@ namespace glPortal {
       bool MapFileParser2::executeConstraint(std::map<std::string, std::vector<SyntaxConstraint> > &constraintMap){
         ParserState newState;
         if((constraintMap.find(currentCharacter) != constraintMap.end())){
-          cout << "\n";
-          std::vector<SyntaxConstraint> constraintVector = constraintMap.at(currentCharacter);
+          std::vector<SyntaxConstraint> constraintVector;
+
+          if(currentCharacter == " "){                     
+            constraintVector = constraintMap.at("whitespace");
+          } else {
+            constraintVector = constraintMap.at(currentCharacter);
+          }
           bool hasValidState = false;
-          if(Environment::DEBUG){
+
+          if(debug){
+            cout << "\n";
             cout << "char found in map." << "\n";
             cout << "char: " << currentCharacter << "\n";
             cout << "before_state: " << parserStateStrings[(int)state] << "\n";
           }
-          if(Environment::DEBUG){
+          if(debug){
             cout << "state: " << parserStateStrings[(int)state] << "\n";
-          }
+          }               
+
 
           for (int i=0; i<constraintVector.size(); i++) {
             SyntaxConstraint constraint = constraintVector[i];
             if(constraint.getIsValidPrerequisiteState(state)){
               hasValidState = true;
-              if(Environment::DEBUG){
+              if(debug){
                 cout << "-> Detected valid state. \n";
               }
               std::vector<EventType> events = constraint.getEvents();
-              
               for(std::vector<EventType>::iterator event = events.begin(); event != events.end(); ++event) {
                 executeEvent(*event);
               }
-              if(Environment::DEBUG){
+
+              if(debug){
                 cout << "switching: " << parserStateStrings[(int)state] << " to ";
                 cout << parserStateStrings[(int)constraint.getResultState()] << "\n";
               }
               newState = constraint.getResultState();
             }
-          } 
-          
+          }   
           if(newState == ParserState::PREVIOUS_STATE){
           } else {
             state = newState;
           }
-          
+
           if((!hasValidState)){
             throwException();
           }
@@ -150,41 +164,65 @@ namespace glPortal {
       void MapFileParser2::executeEvent(EventType event){
         switch(event){
         case EventType::COPY_BUFFER_TO_COMMAND:
-          //                                cout << "copy";
-          command = stringStack;
+          if(stringStack != ""){
+            command = stringStack;
+          }
+          break;
+        case EventType::COPY_BUFFER_TO_PARAMETER:
+          parameters.push_back(stringStack);
           break;
         case EventType::CLEAR_BUFFER:
-          //                                cout << "clear";
           clearStringStack();
           break;
         case EventType::EXECUTE:
-          if(Environment::DEBUG){
+          executeCurrentCommand();
+          if(debugCommands){
             cout << "command found: " << command << "\n";
+                for (unsigned n=0; n<parameters.size(); ++n) {
+                  cout << parameters.at( n ) << "\n ";
+                }
           }
-          break;
-        default:
-          //                cout << "default\n";
-          //                cout << (int)events[i] << "xxx";
-          //                cout << (int)*event;
           break;
         }
       }
 
       void MapFileParser2::executeCurrentCommand(){
-        if(command == "setSpawn"){        
-          cout << "par" << "\n";
-          cout << command;
-          cout << parameters.at(0);
-          cout << parameters.at(1);
-          cout << "\n";
-        } else {
-          cout << "par" << "\n";
-          cout << command;
-          cout << parameters.at(0);
-          cout << parameters.at(1);
-          cout << "\n";
+        if(command == "setLight"){
+          Light light(::atof(parameters.at(0).c_str()), ::atof(parameters.at(1).c_str()), ::atof(parameters.at(2).c_str()));
+          this->gameMap.addLight(light);
         }
-        cout << "clearing" << "\n";
+
+        if(command == "setSpawn"){
+          if(parameters.size() == 3){
+            this->gameMap.setSpawnPosition(::atof(parameters.at(0).c_str()), ::atof(parameters.at(1).c_str()), ::atof(parameters.at(2).c_str()));
+          } else {
+            cout << "Got wrong ammount of parameters -> FAILURE\n";
+          }
+          //          
+        }
+
+        if(command == "addCake"){
+          if(parameters.size() == 3){
+            this->gameMap.setEndPosition(::atof(parameters.at(0).c_str()), ::atof(parameters.at(1).c_str()), ::atof(parameters.at(2).c_str()));
+          } else {
+            cout << "Got wrong ammount of parameters -> FAILURE\n";
+          }
+        }
+
+        if(command == "addBoxes"){
+          cout << parameters.size();
+          float values[6];
+          values[0] = ::atof(parameters.at(1).c_str());
+          cout << parameters.at(1);
+          //          values[1] = ::atof(parameters.at(2).c_str());
+          /*values[2] = ::atof(parameters.at(3).c_str());
+          values[3] = ::atof(parameters.at(4).c_str());
+          values[4] = ::atof(parameters.at(5).c_str());
+          values[5] = ::atof(parameters.at(6).c_str());*/
+          //          this->gameMap.addWallBox(Box(values, TID_WALL));
+          //          void set(float x1, float y1, float z1, float x2, float y2, float z2, TEXTURE_ID type = TID_NONE)          
+        }
+
         parameters.clear();
       }
 
