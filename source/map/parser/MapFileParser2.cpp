@@ -54,8 +54,8 @@ namespace glPortal {
 
       void MapFileParser2::parse(std::ifstream &fileStream){
         if(Environment::DEBUG){
-          //debug = true;
-          debugCommands = true;
+          debug = true;
+          //debugCommands = true;
         }
         std::string line, string;
         while(std::getline(fileStream, line)){
@@ -180,9 +180,11 @@ namespace glPortal {
         case EventType::EXECUTE:
           if(debugCommands){
             cout << "command found: " << command << "\n";
-                for (unsigned n=0; n<parameters.size(); ++n) {
-                  //    cout << parameters.at( n ) << "\n ";
-                }
+            if(false){
+              for (unsigned n=0; n<parameters.size(); ++n) {
+                cout << parameters.at( n ) << "\n ";
+              }
+            }
           }
           executeCurrentCommand();
           break;
@@ -201,7 +203,6 @@ namespace glPortal {
           } else {
             cout << WRONG_PARAMETER_COUNT_MESSAGE << "\n";
           }
-          //          
         }
 
         if(command == "addCake"){
@@ -212,29 +213,25 @@ namespace glPortal {
           }
         }
 
-        float values[7];
         if(command == "addBoxes"){
+          float values[parameters.size()];
+          if((parameters.size()-1) % 6 == 0){
+            for(int i = 1; i <= parameters.size()-1; i++){
+              values[i-1] = ::atof(parameters.at(i).c_str());
+              cout << parameters.at(i) << " -# ";
+            }
 
-          values[0] = ::atof(parameters.at(1).c_str());
-          //cout << parameters.at(1);
-          values[1] = ::atof(parameters.at(2).c_str());
-          values[2] = ::atof(parameters.at(3).c_str());
-          values[3] = ::atof(parameters.at(4).c_str());
-          values[4] = ::atof(parameters.at(5).c_str());
-          values[5] = ::atof(parameters.at(6).c_str());
-
-////////          if(parameters.size() == 3){
-//          if(true){
-          //          cout << parameters.size() << "\n";
-          //cout << parameters.at(0) << "\n";
-            /*            cout << parameters.at(1).size() << "\n";
-            cout << parameters.at(2) << "\n";*/
-        }
-
-          this->gameMap.addWallBox(Box(values, TID_WALL));
-          //          void set(float x1, float y1, float z1, float x2, float y2, float z2, TEXTURE_ID type = TID_NONE)          
+            this->gameMap.addWallBox(Box(values, TID_WALL));
+            
+          } else {
+            cout << WRONG_PARAMETER_COUNT_MESSAGE << " COUNT: " << parameters.size() <<  "\n";
+            for(int i = 0; i <= parameters.size()-1; i++){
+              cout << parameters.at(i) << " -# ";
+            }
+          }
         
-        parameters.clear();
+          parameters.clear();
+        }
       }
 
       void MapFileParser2::clearStringStack(){
