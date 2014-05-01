@@ -16,7 +16,8 @@
 #include "ParserState.hpp"
 #include "SyntaxConstraintFactory.hpp"
 #include "SyntaxConstraint.hpp"
-
+#include <wchar.h>
+#include <locale.h> 
 namespace glPortal {
   namespace map{
     namespace parser{
@@ -54,8 +55,8 @@ namespace glPortal {
 
       void MapFileParser2::parse(std::ifstream &fileStream){
         if(Environment::DEBUG){
-          debug = true;
-          //debugCommands = true;
+          //debug = true;
+          debugCommands = true;
         }
         std::string line, string;
         while(std::getline(fileStream, line)){
@@ -170,7 +171,12 @@ namespace glPortal {
           }
           break;
         case EventType::COPY_BUFFER_TO_PARAMETER:
-          if(stringStack != ""){
+          if((stringStack != "") && (stringStack != " ") && (!stringStack.empty() && (stringStack.size() > 0) && (stringStack[0] != '\0'))){
+            if(debugCommands){
+              //              cout << "Pushing "<< stringStack.size() << " par from stack:" << (int)stringStack.c_str()[0] << flush;
+              cout << "Pushing "<< stringStack.size() << " par from stack:" << flush;
+              printf("0x%x\n",(int)stringStack.c_str()[0]);
+            }
             parameters.push_back(stringStack);
           }
           break;
@@ -192,7 +198,7 @@ namespace glPortal {
       }
 
       void MapFileParser2::executeCurrentCommand(){
-        if(command == "setLight"){
+        if(command == "addLight"){
           Light light(::atof(parameters.at(0).c_str()), ::atof(parameters.at(1).c_str()), ::atof(parameters.at(2).c_str()));
           this->gameMap.addLight(light);
         }
@@ -218,7 +224,7 @@ namespace glPortal {
           if((parameters.size()-1) % 6 == 0){
             for(int i = 1; i <= parameters.size()-1; i++){
               values[i-1] = ::atof(parameters.at(i).c_str());
-              cout << parameters.at(i) << " -# ";
+              cout << parameters.at(i) << "#*";
             }
 
             this->gameMap.addWallBox(Box(values, TID_WALL));
@@ -226,12 +232,12 @@ namespace glPortal {
           } else {
             cout << WRONG_PARAMETER_COUNT_MESSAGE << " COUNT: " << parameters.size() <<  "\n";
             for(int i = 0; i <= parameters.size()-1; i++){
-              cout << parameters.at(i) << " -# ";
+              cout << parameters.at(i) << "?!";
             }
           }
-        
-          parameters.clear();
         }
+        parameters.clear();
+        command = "";
       }
 
       void MapFileParser2::clearStringStack(){
