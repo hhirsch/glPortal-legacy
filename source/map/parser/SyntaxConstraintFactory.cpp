@@ -119,7 +119,7 @@ namespace glPortal {
 
       std::map<std::string, std::vector<SyntaxConstraint> > SyntaxConstraintFactory::getCLikeCharacterMapArray(){
         std::map<std::string, std::vector<SyntaxConstraint> > characterConstraints;
-        SyntaxConstraint array, comma, whiteSpace, brace;
+        SyntaxConstraint array, comma, whiteSpace, brace, closingCurlyBrace;
                 
         comma.addPrerequisiteState(ParserState::READING_PARAMETERS);
         comma.addPrerequisiteState(ParserState::READING_ARRAY);
@@ -136,9 +136,9 @@ namespace glPortal {
         whiteSpace.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
         whiteSpace.addEvent(EventType::CLEAR_BUFFER);
         std::vector<SyntaxConstraint> whiteSpaceVector;
-        commaVector.push_back(whiteSpace);
+        whiteSpaceVector.push_back(whiteSpace);
         characterConstraints["whitespace"] = whiteSpaceVector;
-
+        
         brace.addPrerequisiteState(ParserState::READING_PARAMETERS);
         brace.addPrerequisiteState(ParserState::READING_ARRAY);
         brace.setResultState(ParserState::PREVIOUS_STATE);
@@ -147,6 +147,15 @@ namespace glPortal {
         std::vector<SyntaxConstraint> braceVector;
         braceVector.push_back(brace);
         characterConstraints[">"] = braceVector;
+        
+        closingCurlyBrace.addPrerequisiteState(ParserState::READING_ARRAY);
+        closingCurlyBrace.setResultState(ParserState::READING_COMMAND);
+        closingCurlyBrace.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
+        closingCurlyBrace.addEvent(EventType::CLEAR_BUFFER);
+        closingCurlyBrace.addEvent(EventType::EXECUTE);
+        std::vector<SyntaxConstraint> closingCurlyBraceVector;
+        closingCurlyBraceVector.push_back(closingCurlyBrace);
+        characterConstraints["}"] = closingCurlyBraceVector;
 
         return characterConstraints;
       }

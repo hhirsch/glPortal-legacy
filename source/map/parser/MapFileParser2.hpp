@@ -53,6 +53,8 @@ namespace glPortal {
         "COMMENT INDICATION", "LONG COMMENT", "COMMENT", "LONG COMMENT AWAITING TERMINATION"
       };
       const std::string NO_FILE_MESSAGE = "Unable to load map. File does not exist";
+      const std::string WRONG_PARAMETER_COUNT_MESSAGE = "Wrong ammount of parameters passed.";
+      const std::string STATE_TRANSLATION_MISSING_MESSAGE = "No translation for the state the error occured in.";
     public:
       GameMap getMapFromFile(std::string filename);
     };

@@ -71,7 +71,7 @@ namespace glPortal {
               stringstream conversionStream;
               conversionStream << line[i];
               if(line[i] == ' '){
-                currentCharacter = std::string(" ");
+                currentCharacter = std::string("whitespace");
               } else {
                 conversionStream >> currentCharacter;
               }
@@ -90,9 +90,12 @@ namespace glPortal {
            ){
           executeConstraint(characterConstraintsComments);
         } else if(state == ParserState::READING_ARRAY){
-          executeConstraint(characterConstraintsArray);
+          if(executeConstraint(characterConstraintsArray)){
+          } else {
+            stringStack += currentCharacter; 
+          }
         } else {
-          if((!executeConstraint(characterConstraints)) && (currentCharacter != " ")){
+          if((!executeConstraint(characterConstraints)) && (currentCharacter != "whitespace")){
             stringStack += currentCharacter; 
           }
 
@@ -104,12 +107,10 @@ namespace glPortal {
         ParserState newState;
         if((constraintMap.find(currentCharacter) != constraintMap.end())){
           std::vector<SyntaxConstraint> constraintVector;
-
-          if(currentCharacter == " "){                     
-            constraintVector = constraintMap.at("whitespace");
-          } else {
+          
+          if(currentCharacter != " "){
             constraintVector = constraintMap.at(currentCharacter);
-          }
+          } 
           bool hasValidState = false;
 
           if(debug){
@@ -169,19 +170,21 @@ namespace glPortal {
           }
           break;
         case EventType::COPY_BUFFER_TO_PARAMETER:
-          parameters.push_back(stringStack);
+          if(stringStack != ""){
+            parameters.push_back(stringStack);
+          }
           break;
         case EventType::CLEAR_BUFFER:
           clearStringStack();
           break;
         case EventType::EXECUTE:
-          executeCurrentCommand();
           if(debugCommands){
             cout << "command found: " << command << "\n";
                 for (unsigned n=0; n<parameters.size(); ++n) {
-                  cout << parameters.at( n ) << "\n ";
+                  //    cout << parameters.at( n ) << "\n ";
                 }
           }
+          executeCurrentCommand();
           break;
         }
       }
@@ -196,7 +199,7 @@ namespace glPortal {
           if(parameters.size() == 3){
             this->gameMap.setSpawnPosition(::atof(parameters.at(0).c_str()), ::atof(parameters.at(1).c_str()), ::atof(parameters.at(2).c_str()));
           } else {
-            cout << "Got wrong ammount of parameters -> FAILURE\n";
+            cout << WRONG_PARAMETER_COUNT_MESSAGE << "\n";
           }
           //          
         }
@@ -205,24 +208,32 @@ namespace glPortal {
           if(parameters.size() == 3){
             this->gameMap.setEndPosition(::atof(parameters.at(0).c_str()), ::atof(parameters.at(1).c_str()), ::atof(parameters.at(2).c_str()));
           } else {
-            cout << "Got wrong ammount of parameters -> FAILURE\n";
+            cout << WRONG_PARAMETER_COUNT_MESSAGE << "\n";
           }
         }
 
+        float values[7];
         if(command == "addBoxes"){
-          cout << parameters.size();
-          float values[6];
+
           values[0] = ::atof(parameters.at(1).c_str());
-          cout << parameters.at(1);
-          //          values[1] = ::atof(parameters.at(2).c_str());
-          /*values[2] = ::atof(parameters.at(3).c_str());
+          //cout << parameters.at(1);
+          values[1] = ::atof(parameters.at(2).c_str());
+          values[2] = ::atof(parameters.at(3).c_str());
           values[3] = ::atof(parameters.at(4).c_str());
           values[4] = ::atof(parameters.at(5).c_str());
-          values[5] = ::atof(parameters.at(6).c_str());*/
-          //          this->gameMap.addWallBox(Box(values, TID_WALL));
-          //          void set(float x1, float y1, float z1, float x2, float y2, float z2, TEXTURE_ID type = TID_NONE)          
+          values[5] = ::atof(parameters.at(6).c_str());
+
+////////          if(parameters.size() == 3){
+//          if(true){
+          //          cout << parameters.size() << "\n";
+          //cout << parameters.at(0) << "\n";
+            /*            cout << parameters.at(1).size() << "\n";
+            cout << parameters.at(2) << "\n";*/
         }
 
+          this->gameMap.addWallBox(Box(values, TID_WALL));
+          //          void set(float x1, float y1, float z1, float x2, float y2, float z2, TEXTURE_ID type = TID_NONE)          
+        
         parameters.clear();
       }
 
@@ -231,8 +242,18 @@ namespace glPortal {
       }
 
       void MapFileParser2::throwException(){
-        std::string message = "Got \"" + currentCharacter + "\" while state was " + parserStateStrings[(int)state] + ". "  + currentPositionMessage;
-        throw Exception(message);
+        if(sizeof(parserStateStrings) >= (int)state){
+          std::string message = "Got \"" + currentCharacter + "\" while state was " + parserStateStrings[(int)state] + ". "  + currentPositionMessage;
+          throw Exception(message);
+        } else {
+
+          stringstream stringStream;
+          stringStream << (int)state;
+
+          std::string message = STATE_TRANSLATION_MISSING_MESSAGE + " STATE: " + stringStream.str();
+          throw Exception(message);
+        }
+
       }
     }
   }
