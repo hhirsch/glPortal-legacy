@@ -3,12 +3,12 @@
 namespace glPortal {
   namespace map{
     namespace parser{
-      ParseTreeNode::ParseTreeNode(std::string command){
-        this->command = command;
+      ParseTreeNode::ParseTreeNode(std::string content){
+        this->content = content;
       }
       
-      void ParseTreeNode::addParameter(std::string parameter){
-        this->parameters.push_back(parameter);
+      void ParseTreeNode::addChild(ParseTreeNode child){
+        this->children.push_back(child);
       }
     }
   }

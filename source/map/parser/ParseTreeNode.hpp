@@ -9,11 +9,11 @@ namespace glPortal {
     namespace parser{
     class ParseTreeNode{
     private:
-      std::string command;
-      std::vector<std::string> parameters;
+      std::string content;
+      std::vector<ParseTreeNode> children;
     public:
-      ParseTreeNode(std::string command);
-      void addParameter(std::string parameter);
+      ParseTreeNode(std::string content);
+      void addChild(ParseTreeNode child);
     };
     }
   }
