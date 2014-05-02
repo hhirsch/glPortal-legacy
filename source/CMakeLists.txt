@@ -17,6 +17,7 @@ add_executable(${EXE_NAME}
   map/parser/EventType.hpp
   map/parser/ParserState.hpp
   map/parser/SyntaxConstraint.cpp 
+  map/parser/StateMachine.cpp 
   util/ListFileParser.cpp
   util/ConfigFileParser.cpp
   util/audioplayer/AudioPlayer.cpp
@@ -30,7 +31,7 @@ add_executable(${EXE_NAME}
 add_executable(syntaxConstraintTest map/parser/SyntaxConstraintTest.cpp map/parser/SyntaxConstraint.cpp)
 add_executable(mapFileParserTest map/parser/SyntaxConstraintFactory.cpp map/parser/MapFileParser2Test.cpp 
   map/parser/MapFileParser2.cpp map/parser/SyntaxConstraint.cpp
-  util/Vector3f.cpp GameMap.cpp Exception.cpp
+  util/Vector3f.cpp GameMap.cpp Exception.cpp Light.cpp 
   )
 add_custom_target(run COMMAND ./${EXE_NAME})
 add_custom_target(capture COMMAND avconv -f alsa -f x11grab -r 30 -s 1680x1050 -i :0.0+0,0 -acodec libfaac -vcodec libx264 -pre:0 lossless_ultrafast -threads 0 video.mkv)
