@@ -16,8 +16,7 @@
 #include "ParserState.hpp"
 #include "SyntaxConstraintFactory.hpp"
 #include "SyntaxConstraint.hpp"
-#include <wchar.h>
-#include <locale.h> 
+
 namespace glPortal {
   namespace map{
     namespace parser{
