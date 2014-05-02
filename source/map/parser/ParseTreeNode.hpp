@@ -12,6 +12,8 @@ namespace glPortal {
       std::string command;
       std::vector<std::string> parameters;
     public:
+      ParseTreeNode(std::string command);
+      void addParameter(std::string parameter);
     };
     }
   }
