@@ -7,8 +7,19 @@ namespace glPortal {
         this->content = content;
       }
       
+      std::string ParseTreeNode::getContent(){
+        return this->content;
+      }
+
       void ParseTreeNode::addChild(ParseTreeNode child){
         this->children.push_back(child);
+      }
+
+      bool ParseTreeNode::isLeaf(){
+        if(this->children.size() <= 0){
+          return true;
+        }
+        return false;
       }
     }
   }

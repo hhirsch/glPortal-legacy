@@ -13,7 +13,9 @@ namespace glPortal {
       std::vector<ParseTreeNode> children;
     public:
       ParseTreeNode(std::string content);
-      void addChild(ParseTreeNode child);
+      std::string getContent();
+      void addChild(ParseTreeNode child);      
+      bool isLeaf();
     };
     }
   }
