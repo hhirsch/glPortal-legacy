@@ -171,12 +171,7 @@ namespace glPortal {
           }
           break;
         case EventType::COPY_BUFFER_TO_PARAMETER:
-          if((stringStack != "") && (stringStack != " ") && (!stringStack.empty() && (stringStack.size() > 0) && (stringStack[0] != '\0'))){
-            if(debugCommands){
-              //              cout << "Pushing "<< stringStack.size() << " par from stack:" << (int)stringStack.c_str()[0] << flush;
-              cout << "Pushing "<< stringStack.size() << " par from stack:" << flush;
-              printf("0x%x\n",(int)stringStack.c_str()[0]);
-            }
+          if((stringStack != " ") && (!stringStack.empty() && (stringStack.size() > 0) && (stringStack[0] != '\0'))){
             parameters.push_back(stringStack);
           }
           break;
@@ -186,7 +181,7 @@ namespace glPortal {
         case EventType::EXECUTE:
           if(debugCommands){
             cout << "command found: " << command << "\n";
-            if(false){
+            if(true){
               for (unsigned n=0; n<parameters.size(); ++n) {
                 cout << parameters.at( n ) << "\n ";
               }
@@ -227,13 +222,13 @@ namespace glPortal {
               cout << parameters.at(i) << "#*";
             }
 
-            this->gameMap.addWallBox(Box(values, TID_WALL));
-            
+            this->gameMap.addWallBox(Box(values, TID_WALL));  
           } else {
-            cout << WRONG_PARAMETER_COUNT_MESSAGE << " COUNT: " << parameters.size() <<  "\n";
-            for(int i = 0; i <= parameters.size()-1; i++){
-              cout << parameters.at(i) << "?!";
+            for(int i = 1; i <= parameters.size()-1; i++){
+              values[i-1] = ::atof(parameters.at(i).c_str());
+              cout << parameters.at(i) << "!?";
             }
+
           }
         }
         parameters.clear();
