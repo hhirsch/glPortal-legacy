@@ -18,6 +18,7 @@ add_executable(${EXE_NAME}
   map/parser/ParserState.hpp
   map/parser/SyntaxConstraint.cpp 
   map/parser/StateMachine.cpp 
+  map/parser/ParseTreeNode.cpp 
   util/ListFileParser.cpp
   util/ConfigFileParser.cpp
   util/audioplayer/AudioPlayer.cpp
