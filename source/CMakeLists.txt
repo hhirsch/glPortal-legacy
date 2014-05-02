@@ -14,6 +14,7 @@ add_executable(${EXE_NAME}
   map/MapFileParser.cpp
   map/parser/SyntaxConstraintFactory.cpp
   map/parser/MapFileParser2.cpp
+  map/parser/MapFileLexer.cpp 
   map/parser/EventType.hpp
   map/parser/ParserState.hpp
   map/parser/SyntaxConstraint.cpp 
