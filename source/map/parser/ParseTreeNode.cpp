@@ -14,6 +14,10 @@ namespace glPortal {
       void ParseTreeNode::addChild(ParseTreeNode child){
         this->children.push_back(child);
       }
+      
+      std::vector<ParseTreeNode> ParseTreeNode::getChildren(){
+        return this->children;
+      }
 
       bool ParseTreeNode::isLeaf(){
         if(this->children.size() <= 0){
