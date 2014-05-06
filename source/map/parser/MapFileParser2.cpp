@@ -23,9 +23,10 @@ namespace glPortal {
        */
       GameMap MapFileParser2::getMapFromFile(std::string filename) {
         std::cout << "parsing";
-        TreeNode *node = new TreeNode(std::string("Test"));
+        Parser parser = Parser(filename);
+        //TreeNode *node = new TreeNode(std::string("Test"));
 
-        return MapConverter::treeNodeToGameMap(node);
+        return MapConverter::treeNodeToGameMap(parser.getRootNode());
         //        exit(0);
         //   Parser parser = Parser(filename);
         //        parser.parse();

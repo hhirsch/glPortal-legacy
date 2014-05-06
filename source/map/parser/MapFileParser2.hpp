@@ -2,6 +2,7 @@
 #define __MAPFILEPARSER2_HPP
 
 #include <vector>
+#include <string>
 #include <cstring>
 #include <cstdlib> 
 #include <map>
