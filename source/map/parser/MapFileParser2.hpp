@@ -6,7 +6,10 @@
 #include <cstdlib> 
 #include <map>
 #include "../../GameMap.hpp"
+#include "../../util/parser/TreeNode.hpp"
+
 using namespace glPortal::engine::object;
+using namespace glPortal::util::parser;
 
 namespace glPortal {
   namespace map{
