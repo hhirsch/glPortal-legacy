@@ -5,6 +5,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "Lexer.hpp"
+#include "StateMachine.hpp"
 #include "TreeNode.hpp"
 
 namespace glPortal {
@@ -14,7 +16,9 @@ namespace glPortal {
     private:
       std::string filename;
       std::ifstream *fileStream;
-      TreeNode rootNode = TreeNode("root");
+      Lexer *lexer;
+      StateMachine *stateMachine;
+      TreeNode rootNode;
     public:
       Parser(std::string filename);
       void generateTree();
