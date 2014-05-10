@@ -10,7 +10,7 @@ namespace glPortal {
     private:
       StateMachine *machine;
     public:
-      Lexer(StateMachine *machine);      
+      Lexer();      
     };
     }
   }

@@ -43,7 +43,7 @@ namespace glPortal {
           this->parse(fileStream);
           fileStream.close();
           return this->gameMap;
-        }
+        }1
       }
       
       void MapFileParser2::initializeSyntax(){

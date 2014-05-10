@@ -13,6 +13,8 @@ namespace glPortal {
       MachineState state;
       std::string stringStack, currentCharacter;
     public:
+      void setState(MachineState state);
+      MachineState getState();
     };
     }
   }

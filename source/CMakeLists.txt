@@ -15,7 +15,8 @@ add_executable(${EXE_NAME}
   map/MapFileParser.cpp
   map/parser/MapConverter.cpp
   map/parser/MapFileParser2.cpp
-  util/parser/Parser.cpp 
+  util/parser/Parser.cpp
+  util/parser/Scanner.cpp  
   util/parser/Lexer.cpp 
   util/parser/EventType.hpp
   util/parser/SyntaxConstraint.cpp 

@@ -1,5 +1,5 @@
-#ifndef __EVENT_TYPE_CPP
-#define __EVENT_TYPE_CPP
+#ifndef __EVENT_TYPE_HPP
+#define __EVENT_TYPE_HPP
 enum class EventType { 
   CLEAR_BUFFER, 
   COPY_BUFFER_TO_COMMAND, 
