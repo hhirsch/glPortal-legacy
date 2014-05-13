@@ -12,11 +12,11 @@ namespace glPortal {
         return this->content;
       }
 
-      void TreeNode::addChild(TreeNode child){
+      void TreeNode::addChild(TreeNode *child){
         this->children.push_back(child);
       }
       
-      std::vector<TreeNode> TreeNode::getChildren(){
+      std::vector<TreeNode *> TreeNode::getChildren(){
         return this->children;
       }
 

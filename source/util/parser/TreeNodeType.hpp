@@ -6,8 +6,7 @@ namespace glPortal {
       enum class TreeNodeType { 
 	ROOT,
         COMMAND, 
-        PARAMETER,
-        END_COMMAND
+        PARAMETER
       };
     }
   }

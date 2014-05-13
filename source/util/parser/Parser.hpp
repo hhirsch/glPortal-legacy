@@ -25,8 +25,8 @@ namespace glPortal {
 	Scanner *scanner;
 	LexerEvent lastEvent;
 	StateMachine *stateMachine;
-	TreeNode rootNode;
-	TreeNode *currentNode;
+	TreeNode *rootNode;
+	TreeNode *currentCommand;
       public:
 	Parser(std::string filename);
 	void addNode(LexerEvent event, std::string data);

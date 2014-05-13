@@ -12,12 +12,12 @@ namespace glPortal {
     private:
       TreeNodeType type;
       std::string content;
-      std::vector<TreeNode> children;
+      std::vector<TreeNode*> children;
     public:
       TreeNode(TreeNodeType type, std::string content);
       std::string getContent();
-      std::vector<TreeNode> getChildren();
-      void addChild(TreeNode child);      
+      std::vector<TreeNode *> getChildren();
+      void addChild(TreeNode *child);      
       bool isLeaf();
     };
     }

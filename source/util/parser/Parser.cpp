@@ -10,10 +10,12 @@
 namespace glPortal {
   namespace util{
     namespace parser{
-      Parser::Parser(std::string filename):  rootNode(TreeNodeType::ROOT, ""), lineNumber(0), lexer(){
+      Parser::Parser(std::string filename): lineNumber(0), lexer(){
+	this->rootNode = new TreeNode(TreeNodeType::ROOT, "");
 	this->scanner = new Scanner(this);
         this->filename = filename;
         this->fileStream = new std::ifstream(filename, std::ifstream::in);
+	this->currentCommand = rootNode;
 
         if(!fileStream){
           throw std::invalid_argument("File " + filename + " not found.");
@@ -39,7 +41,7 @@ namespace glPortal {
 
       void Parser::addNode(LexerEvent event, std::string data){
 	if(event == LexerEvent::COMMAND){
-	  currentNode = new TreeNode(TreeNodeType::ROOT, std::string(""));
+	  currentCommand = new TreeNode(TreeNodeType::COMMAND, data);
 	}
       }
 
@@ -52,7 +54,7 @@ namespace glPortal {
       }
 
       TreeNode* Parser::getRootNode(){
-        return &rootNode;
+        return rootNode;
       }
     }
   }
