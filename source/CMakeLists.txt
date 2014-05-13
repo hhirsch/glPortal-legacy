@@ -23,6 +23,7 @@ add_executable(${EXE_NAME}
   util/parser/StateMachine.cpp 
   util/parser/MachineState.hpp
   util/parser/TreeNode.cpp 
+  util/parser/TreeNodeType.hpp 
   util/parser/TreeNodeDumper.cpp 
   util/ListFileParser.cpp
   util/ConfigFileParser.cpp

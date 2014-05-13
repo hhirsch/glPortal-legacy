@@ -3,7 +3,8 @@
 namespace glPortal {
   namespace util{
     namespace parser{
-      TreeNode::TreeNode(std::string content){
+      TreeNode::TreeNode(TreeNodeType type, std::string content){
+        this->type    = type;
         this->content = content;
       }
       

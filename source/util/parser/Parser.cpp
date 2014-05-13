@@ -3,13 +3,15 @@
 #include <sstream>
 #include <stdexcept>      
 #include "Lexer.hpp"
+#include "LexerEvent.hpp"
 #include "Scanner.hpp"
 #include "StateMachine.hpp"
 
 namespace glPortal {
   namespace util{
     namespace parser{
-      Parser::Parser(std::string filename):  rootNode("root"), lineNumber(0), lexer(), scanner(){
+      Parser::Parser(std::string filename):  rootNode(TreeNodeType::ROOT, ""), lineNumber(0), lexer(){
+	this->scanner = new Scanner(this);
         this->filename = filename;
         this->fileStream = new std::ifstream(filename, std::ifstream::in);
 
@@ -33,6 +35,12 @@ namespace glPortal {
             }
           }
         }        
+      }
+
+      void Parser::addNode(LexerEvent event, std::string data){
+	if(event == LexerEvent::COMMAND){
+	  currentNode = new TreeNode(TreeNodeType::ROOT, std::string(""));
+	}
       }
 
       void Parser::generateTree(){
