@@ -12,6 +12,25 @@ namespace glPortal {
         return this->content;
       }
 
+      TreeNodeType TreeNode::getType(){
+        return this->type;
+      }
+
+      void TreeNode::setParent(TreeNode *node){
+	this->parent = node;
+      }
+
+      TreeNode *TreeNode::getParent(){
+	return this->parent;
+      }
+
+      bool TreeNode::hasParent(){
+	if(this->parent){
+	  return true;
+	}
+	return false;
+      }
+
       void TreeNode::addChild(TreeNode *child){
         this->children.push_back(child);
       }
