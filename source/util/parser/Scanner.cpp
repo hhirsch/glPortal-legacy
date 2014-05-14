@@ -14,14 +14,18 @@ namespace glPortal {
 	  for(int i = 0; i <= line.length(); i++){
 	    std::stringstream conversionStream;
 	    conversionStream << line[i];
-	    if(line[i] == ' '){
+	    if((line[i] == ' ') || (line[i] == '\0')){
 	      currentCharacter = std::string("whitespace");
 	    } else {
 	      conversionStream >> currentCharacter;
 	    }
-	    //this->tokenize();
+	    this->evaluate(currentCharacter);
 	  }
 	}
+      }
+
+      void Scanner::evaluate(std::string character){
+	
       }
 
     }

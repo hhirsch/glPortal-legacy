@@ -4,6 +4,7 @@
 #include <string>
 #include "EventType.hpp"
 #include "MachineState.hpp"
+#include "StateMachine.hpp"
 #include "TreeNode.hpp"
 #include "Parser.hpp"
 
@@ -14,6 +15,7 @@ namespace glPortal {
       class Scanner{
       private:
 	Parser *parser;
+	StateMachine *stateMachine;
 	MachineState state;
 	std::string stringStack, currentCharacter;
       public:
