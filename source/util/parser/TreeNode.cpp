@@ -32,6 +32,7 @@ namespace glPortal {
       }
 
       void TreeNode::addChild(TreeNode *child){
+	child->setParent(this);
         this->children.push_back(child);
       }
       

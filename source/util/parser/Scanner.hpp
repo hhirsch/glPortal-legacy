@@ -13,6 +13,7 @@ namespace glPortal {
       class Parser;
       class Scanner{
       private:
+	Parser *parser;
 	MachineState state;
 	std::string stringStack, currentCharacter;
       public:
