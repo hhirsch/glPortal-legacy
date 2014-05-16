@@ -21,6 +21,7 @@ namespace glPortal {
       public:
 	Scanner(Parser *parser);
 	void scan(std::string line);
+	void evaluate(std::string character);
 	TreeNode getRootNode();
       };
     }

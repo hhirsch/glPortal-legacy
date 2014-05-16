@@ -25,7 +25,8 @@ namespace glPortal {
       }
 
       void Scanner::evaluate(std::string character){
-	
+	stateMachine->setCharacter(character);
+	stateMachine->getEvents();
       }
 
     }
