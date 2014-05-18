@@ -20,7 +20,7 @@ namespace glPortal {
 	MachineState state;
 	std::string stringStack, currentCharacter;
       public:
-      void setCharacter(std::string character);
+	void setCharacter(std::string character);
 	std::vector<EventType> getEvents();
       };
     }

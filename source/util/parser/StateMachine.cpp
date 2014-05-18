@@ -9,7 +9,11 @@ namespace glPortal {
       
       std::vector<EventType> StateMachine::getEvents(){
         if((constraintMap.find(currentCharacter) != constraintMap.end())){
-	  constraintMap.at(currentCharacter);
+	  MachineStateChangeSetMap machineStateChangeSetMap =  constraintMap.at(currentCharacter);
+	  if((machineStateChangeSetMap.find(state) != machineStateChangeSetMap.end())){
+	    StateMachineChangeSet changeSet =  machineStateChangeSetMap.at(state);
+	    
+	  }
 	}
       }
     }
