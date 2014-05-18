@@ -8,6 +8,9 @@ namespace glPortal {
       }
       
       std::vector<EventType> StateMachine::getEvents(){
+        if((constraintMap.find(currentCharacter) != constraintMap.end())){
+	  constraintMap.at(currentCharacter);
+	}
       }
     }
   }

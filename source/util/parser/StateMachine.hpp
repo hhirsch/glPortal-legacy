@@ -6,16 +6,17 @@
 #include <vector>
 #include "EventType.hpp"
 #include "MachineState.hpp"
+#include "StateMachineChangeSet.hpp"
 #include "SyntaxConstraint.hpp"
 
-typedef std::map<std::string, glPortal::util::parser::SyntaxConstraint> CharacterConstraintMap;
+typedef std::map<MachineState, glPortal::util::parser::StateMachineChangeSet> MachineStateChangeSetMap;
 
 namespace glPortal {
   namespace util{
     namespace parser{
       class StateMachine{
       private:
-	std::map<MachineState, CharacterConstraintMap> stateConstraintMap;
+	std::map<std::string, MachineStateChangeSetMap> constraintMap;
 	MachineState state;
 	std::string stringStack, currentCharacter;
       public:
