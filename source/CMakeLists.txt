@@ -22,7 +22,7 @@ add_executable(${EXE_NAME}
   util/parser/SyntaxConstraint.cpp 
   util/parser/StateMachine.cpp 
   util/parser/StateMachineChangeSet.cpp 
-  util/parser/StateMachineConstraintMapFactory.hpp
+  util/parser/StateMachineConstraintMapFactory.cpp
   util/parser/MachineState.hpp
   util/parser/TreeNode.cpp 
   util/parser/TreeNodeType.hpp 

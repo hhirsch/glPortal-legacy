@@ -6,7 +6,7 @@
 #include "StateMachine.hpp"
 
 namespace glPortal {
-  namespace map{
+  namespace util{
     namespace parser{
       class StateMachineConstraintMapFactory {
       public:

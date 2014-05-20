@@ -9,6 +9,7 @@ namespace glPortal {
     namespace parser{
       class StateMachineChangeSet {
       public:
+	StateMachineChangeSet();
         void addEvent(EventType event);
         void setResultState(MachineState state);
         MachineState getResultState();

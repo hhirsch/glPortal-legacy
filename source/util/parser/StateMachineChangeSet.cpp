@@ -7,6 +7,8 @@
 namespace glPortal {
   namespace util{
     namespace parser{
+      StateMachineChangeSet::StateMachineChangeSet(): resultState(MachineState::INITIAL_STATE){
+      }
       void StateMachineChangeSet::addEvent(EventType event){
         events.push_back(event);
       }
