@@ -3,6 +3,10 @@
 namespace glPortal {
   namespace util{
     namespace parser{
+      StateMachine::StateMachine(){
+	constraintMap = StateMachineConstraintMapFactory::getConstraintMap();
+      }
+      
       void StateMachine::setCharacter(std::string character){
 	this->currentCharacter = character;
       }
