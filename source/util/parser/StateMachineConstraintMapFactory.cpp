@@ -10,14 +10,25 @@
 namespace glPortal {
   namespace util{
     namespace parser{
-	typedef std::map<std::string, std::string> StringMap;
       std::map<std::string, MachineStateChangeSetMap> StateMachineConstraintMapFactory::getConstraintMap(){
 	std::map<std::string, MachineStateChangeSetMap> constraintMap;
-	StateMachineChangeSet changeSet;
-	changeSet.setResultState(MachineState::READING_COMMAND);
-	MachineStateChangeSetMap changeSetMap;
-	changeSetMap[MachineState::READING_COMMAND] =  changeSet;
-	constraintMap[std::string("(")] = changeSetMap;
+	//opening brace constraint
+	StateMachineChangeSet ob_changeSet;
+	ob_changeSet.setResultState(MachineState::READING_PARAMETERS);
+	ob_changeSet.addEvent(EventType::COPY_BUFFER_TO_COMMAND);
+	ob_changeSet.addEvent(EventType::CLEAR_BUFFER);
+	MachineStateChangeSetMap ob_changeSetMap;
+	ob_changeSetMap[MachineState::READING_COMMAND] =  ob_changeSet;
+	constraintMap[std::string("(")] = ob_changeSetMap;
+
+	//closing brace constraint
+	StateMachineChangeSet cb_changeSet;
+	cb_changeSet.setResultState(MachineState::WAITING_TERMINATION);
+        cb_changeSet.addEvent(EventType::COPY_BUFFER_TO_PARAMETER);
+        cb_changeSet.addEvent(EventType::CLEAR_BUFFER);
+	MachineStateChangeSetMap cb_changeSetMap;
+	cb_changeSetMap[MachineState::READING_COMMAND] =  cb_changeSet;
+	constraintMap[std::string(")")] = cb_changeSetMap;
 
 	return constraintMap;
       }
